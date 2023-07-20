@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WeatherService } from '../../services/weather.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { IWeathersData } from 'src/app/models/interfaces/IWeathersData';
 
 @Component({
@@ -8,7 +8,8 @@ import { IWeathersData } from 'src/app/models/interfaces/IWeathersData';
   templateUrl: './weather-home.component.html',
   styleUrls: [],
 })
-export class WeatherHomeComponent implements OnInit {
+export class WeatherHomeComponent implements OnInit, OnDestroy {
+  private readonly destroy$: Subject<void> = new Subject();
   initialCityName: string = 'São Paulo';
   wheathersData!: IWeathersData;
 
@@ -19,12 +20,21 @@ export class WeatherHomeComponent implements OnInit {
   }
 
   getWeatherDatas(cityName: string): void {
-    this.wheaterService.getWeatherDatas(cityName).subscribe({
-      next: (response) => {
-        response && (this.wheathersData = response);
-        console.log(this.wheathersData.sys);
-      },
-      error: (error) => console.log(error),
-    });
+    this.wheaterService
+      .getWeatherDatas(cityName)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          response && (this.wheathersData = response);
+          console.log(this.wheathersData.sys);
+        },
+        error: (error) => console.log(error),
+      });
+  }
+
+  //Resolve memory Leek
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
