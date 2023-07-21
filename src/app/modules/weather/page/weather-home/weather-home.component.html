@@ -19,3 +19,8 @@
     </span>
   </form>
 </div>
+
+<app-weather-card
+  *ngIf="wheathersData"
+  [weatherDatasInput]="wheathersData"
+></app-weather-card>
