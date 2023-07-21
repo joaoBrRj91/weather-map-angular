@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WeatherService } from '../../services/weather.service';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { IWeathersData } from 'src/app/models/interfaces/IWeathersData';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-weather-home',
@@ -12,6 +13,7 @@ export class WeatherHomeComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject();
   initialCityName: string = 'São Paulo';
   wheathersData!: IWeathersData;
+  searchIcon = faMagnifyingGlass;
 
   constructor(private wheaterService: WeatherService) {}
 
@@ -30,6 +32,11 @@ export class WeatherHomeComponent implements OnInit, OnDestroy {
         },
         error: (error) => console.log(error),
       });
+  }
+
+  onSubmit() : void {
+    this.getWeatherDatas(this.initialCityName);
+    this.initialCityName = '';
   }
 
   //Resolve memory Leek
