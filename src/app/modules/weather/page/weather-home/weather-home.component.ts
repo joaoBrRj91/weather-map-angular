@@ -11,19 +11,20 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 })
 export class WeatherHomeComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject();
-  initialCityName: string = 'São Paulo';
+  currentCityName: string = 'Rio de Janeiro';
+  updatedCityName: string = '';
   wheathersData!: IWeathersData;
   searchIcon = faMagnifyingGlass;
 
   constructor(private wheaterService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getWeatherDatas(this.initialCityName);
+    this.getWeatherDatas(this.currentCityName);
   }
 
-  getWeatherDatas(cityName: string): void {
+  getWeatherDatas(cityNameUpdated: string, cityNameCurrent?: string): void {
     this.wheaterService
-      .getWeatherDatas(cityName)
+      .getWeatherDatas(cityNameUpdated, cityNameCurrent)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -31,12 +32,12 @@ export class WeatherHomeComponent implements OnInit, OnDestroy {
           console.log(this.wheathersData.sys);
         },
         error: (error) => console.log(error),
+        complete: () => (this.currentCityName = this.wheathersData.name),
       });
   }
 
-  onSubmit() : void {
-    this.getWeatherDatas(this.initialCityName);
-    this.initialCityName = '';
+  onSubmit(): void {
+    this.getWeatherDatas(this.updatedCityName, this.currentCityName);
   }
 
   //Resolve memory Leek
