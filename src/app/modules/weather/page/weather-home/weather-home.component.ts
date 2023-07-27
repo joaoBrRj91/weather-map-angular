@@ -29,7 +29,7 @@ export class WeatherHomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           response && (this.wheathersData = response);
-          console.log(this.wheathersData.sys);
+          console.log(this.wheathersData);
         },
         error: (error) => console.log(error),
         complete: () => (this.currentCityName = this.wheathersData.name),

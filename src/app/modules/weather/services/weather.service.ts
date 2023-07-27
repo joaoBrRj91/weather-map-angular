@@ -15,16 +15,12 @@ export class WeatherService {
     cityNameUpdated: string,
     cityNameCurrent?: string
   ): Observable<any> {
-    if (cityNameCurrent)
-      this.urlWeatherApi = this.urlWeatherApi.replace(
-        cityNameCurrent,
-        cityNameUpdated
-      );
-    else
-      this.urlWeatherApi = this.urlWeatherApi.replace(
-        'cityName',
-        cityNameUpdated
-      );
+    if (this.urlWeatherApi.includes('cityName')) cityNameCurrent = 'cityName';
+
+    this.urlWeatherApi = this.urlWeatherApi.replace(
+      cityNameCurrent!,
+      cityNameUpdated
+    );
 
     return this.http.get(this.urlWeatherApi, {});
   }
